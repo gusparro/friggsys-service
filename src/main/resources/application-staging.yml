@@ -1,0 +1,81 @@
+# ==========================================================================
+# PROFILE: STAGING
+# Activate with: mvn spring-boot:run -Dspring-boot.run.profiles=staging
+# Or in IntelliJ: Active profiles = staging
+# ==========================================================================
+
+spring:
+  # ===========
+  # DATASOURCE
+  # ===========
+  datasource:
+    url: jdbc:postgresql://localhost:5432/friggsys?currentSchema=public&serverTimezone=UTC
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 3
+      maximum-pool-size: 5
+      idle-timeout: 10000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      pool-name: HikariPool-Staging
+
+  # ================
+  # JPA / HIBERNATE
+  # ================
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # =======
+  # FLYWAY
+  # =======
+  flyway:
+    enabled: true
+    locations: classpath:database/migrations, classpath:database/development
+    baseline-on-migrate: true
+    validate-on-migrate: true
+
+# =======
+# SERVER
+# =======
+server:
+  port: 8080
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: always
+
+# ====================
+# SPRINGDOC / SWAGGER
+# ====================
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    try-it-out-enabled: true
+    display-request-duration: true
+
+# ==================
+# LOGGING / LOGBACK
+# ==================
+logging:
+  level:
+    root: INFO
+    com.gusparro: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+  file:
+    name: logs/application-staging.log
+
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 7
+      total-size-cap: 100MB

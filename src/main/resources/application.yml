@@ -1,0 +1,46 @@
+# ======================
+# DEFAULT CONFIGURATION
+# ======================
+spring:
+  application:
+    name: "@project.name@"
+    version: "@project.version@"
+    java: "@java.version@"
+
+  profiles:
+    active: "@spring.profiles.active@"
+
+  banner:
+    location: classpath:/banner.txt
+
+  # ================
+  # JPA / HIBERNATE
+  # ================
+  jpa:
+    database: postgresql
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        format_sql: true
+
+# ====================
+# SPRINGDOC / SWAGGER
+# ====================
+springdoc:
+  api-docs:
+    path: ${api.prefix}/api-docs
+  swagger-ui:
+    path: ${api.prefix}/swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+
+# =========================
+# API CUSTOM CONFIGURATION
+# =========================
+api:
+  prefix: /friggsys-service/api/v1

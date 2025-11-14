@@ -1,0 +1,79 @@
+# ==========================================================================
+# PROFILE: PRODUCTION
+# Activate with: mvn spring-boot:run -Dspring-boot.run.profiles=production
+# Or in IntelliJ: Active profiles = production
+# ==========================================================================
+
+spring:
+  # ===========
+  # DATASOURCE
+  # ===========
+  datasource:
+    url: jdbc:postgresql://localhost:5432/friggsys?currentSchema=public&serverTimezone=UTC
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      minimum-idle: 10
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      connection-timeout: 20000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      pool-name: HikariPool-Production
+
+  # ================
+  # JPA / HIBERNATE
+  # ================
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  # =======
+  # FLYWAY
+  # =======
+  flyway:
+    enabled: true
+    locations: classpath:database/migrations
+    baseline-on-migrate: false
+    validate-on-migrate: true
+    out-of-order: false
+
+# =======
+# SERVER
+# =======
+server:
+  port: 8080
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+
+# ====================
+# SPRINGDOC / SWAGGER
+# ====================
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false
+
+# ==================
+# LOGGING / LOGBACK
+# ==================
+logging:
+  level:
+    root: WARN
+    com.gusparro: INFO
+    org.springframework.web: WARN
+    org.hibernate.SQL: WARN
+
+  file:
+    name: logs/application.log
+
+  logback:
+    rollingpolicy:
+      max-file-size: 50MB
+      max-history: 30
+      total-size-cap: 5GB
