@@ -16,9 +16,7 @@ public class Telephone {
 
     private static final Logger logger = LoggerFactory.getLogger(Password.class);
 
-    private static final Pattern TELEPHONE_PATTERN = Pattern.compile(
-            "^[+]?[(]?[0-9]{2,3}[)]?[-\\s.]?[(]?[0-9]{2}[)]?[-\\s.]?[0-9]{4,5}[-\\s.]?[0-9]{4}$"
-    );
+    private static final Pattern TELEPHONE_PATTERN = Pattern.compile("^\\(\\d{2}\\) \\d{4,5}-\\d{4}$");
 
     private final String telephone;
 
