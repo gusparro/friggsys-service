@@ -39,6 +39,11 @@ spring:
     baseline-on-migrate: true
     validate-on-migrate: true
 
+  security:
+    user:
+      name: friggsys_user
+      password: friggsys_user
+
 # =======
 # SERVER
 # =======
