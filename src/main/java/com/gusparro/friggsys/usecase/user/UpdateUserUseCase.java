@@ -34,7 +34,7 @@ public class UpdateUserUseCase {
         var email = Email.of(input.email());
         var telephone = Telephone.of(input.telephone());
 
-        if (repository.existsByEmail(email)) {
+        if (repository.existsByEmail(email) && !user.getEmail().equals(email.getValue())) {
             logger.error("User with email {} already exists", email);
 
             throw UseCaseExceptionFactory.duplicateEmailError(email.getValue());

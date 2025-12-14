@@ -45,6 +45,7 @@ class UpdateUserUseCaseTest {
     private UpdateUserInput input;
     private static final String USER_NAME = "John Doe Updated";
     private static final String USER_EMAIL = "john.updated@example.com";
+    private static final String CURRENT_USER_EMAIL = "john.current@example.com";
     private static final String USER_TELEPHONE = "(11) 98888-8888";
 
     @BeforeEach
@@ -71,6 +72,25 @@ class UpdateUserUseCaseTest {
     }
 
     @Test
+    @DisplayName("Should update user successfully when keeping the same email")
+    void shouldUpdateUserSuccessfullyWhenKeepingTheSameEmail() {
+        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(USER_EMAIL);
+        doNothing().when(user).update(any(Name.class), any(Email.class), any(Telephone.class));
+        when(repository.save(user)).thenReturn(updatedUser);
+
+        var result = useCase.execute(input);
+
+        assertNotNull(result);
+        verify(repository, times(1)).findById(userId);
+        verify(repository, times(1)).existsByEmail(any(Email.class));
+        verify(user, times(1)).getEmail();
+        verify(user, times(1)).update(any(Name.class), any(Email.class), any(Telephone.class));
+        verify(repository, times(1)).save(user);
+    }
+
+    @Test
     @DisplayName("Should throw EntityNotFoundError when user does not exist")
     void shouldThrowEntityNotFoundErrorWhenUserDoesNotExist() {
         when(repository.findById(userId)).thenReturn(Optional.empty());
@@ -83,15 +103,17 @@ class UpdateUserUseCaseTest {
         assertNotNull(exception);
         verify(repository, times(1)).findById(userId);
         verify(repository, never()).existsByEmail(any(Email.class));
+        verify(user, never()).getEmail();
         verify(user, never()).update(any(Name.class), any(Email.class), any(Telephone.class));
         verify(repository, never()).save(any(User.class));
     }
 
     @Test
-    @DisplayName("Should throw DuplicateEmailError when email already exists")
-    void shouldThrowDuplicateEmailErrorWhenEmailAlreadyExists() {
+    @DisplayName("Should throw DuplicateEmailError when email already exists for different user")
+    void shouldThrowDuplicateEmailErrorWhenEmailAlreadyExistsForDifferentUser() {
         when(repository.findById(userId)).thenReturn(Optional.of(user));
         when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(CURRENT_USER_EMAIL);
 
         var exception = assertThrows(
                 DuplicateEmailError.class,
@@ -101,13 +123,14 @@ class UpdateUserUseCaseTest {
         assertNotNull(exception);
         verify(repository, times(1)).findById(userId);
         verify(repository, times(1)).existsByEmail(any(Email.class));
+        verify(user, times(1)).getEmail();
         verify(user, never()).update(any(Name.class), any(Email.class), any(Telephone.class));
         verify(repository, never()).save(any(User.class));
     }
 
     @Test
-    @DisplayName("Should call methods in correct order")
-    void shouldCallMethodsInCorrectOrder() {
+    @DisplayName("Should call methods in correct order when email is different")
+    void shouldCallMethodsInCorrectOrderWhenEmailIsDifferent() {
         when(repository.findById(userId)).thenReturn(Optional.of(user));
         when(repository.existsByEmail(any(Email.class))).thenReturn(false);
         doNothing().when(user).update(any(Name.class), any(Email.class), any(Telephone.class));
@@ -118,6 +141,25 @@ class UpdateUserUseCaseTest {
         var inOrder = inOrder(repository, user);
         inOrder.verify(repository).findById(userId);
         inOrder.verify(repository).existsByEmail(any(Email.class));
+        inOrder.verify(user).update(any(Name.class), any(Email.class), any(Telephone.class));
+        inOrder.verify(repository).save(user);
+    }
+
+    @Test
+    @DisplayName("Should call methods in correct order when email is the same")
+    void shouldCallMethodsInCorrectOrderWhenEmailIsTheSame() {
+        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(USER_EMAIL);
+        doNothing().when(user).update(any(Name.class), any(Email.class), any(Telephone.class));
+        when(repository.save(user)).thenReturn(updatedUser);
+
+        useCase.execute(input);
+
+        var inOrder = inOrder(repository, user);
+        inOrder.verify(repository).findById(userId);
+        inOrder.verify(repository).existsByEmail(any(Email.class));
+        inOrder.verify(user).getEmail();
         inOrder.verify(user).update(any(Name.class), any(Email.class), any(Telephone.class));
         inOrder.verify(repository).save(user);
     }
@@ -148,6 +190,7 @@ class UpdateUserUseCaseTest {
         assertThrows(ValidationError.class, () -> useCase.execute(invalidInput));
         verify(repository, times(1)).findById(userId);
         verify(repository, never()).existsByEmail(any(Email.class));
+        verify(user, never()).getEmail();
         verify(user, never()).update(any(Name.class), any(Email.class), any(Telephone.class));
         verify(repository, never()).save(any(User.class));
     }
@@ -161,6 +204,7 @@ class UpdateUserUseCaseTest {
         assertThrows(ValidationError.class, () -> useCase.execute(invalidInput));
         verify(repository, times(1)).findById(userId);
         verify(repository, never()).existsByEmail(any(Email.class));
+        verify(user, never()).getEmail();
         verify(user, never()).update(any(Name.class), any(Email.class), any(Telephone.class));
         verify(repository, never()).save(any(User.class));
     }
@@ -174,6 +218,7 @@ class UpdateUserUseCaseTest {
         assertThrows(ValidationError.class, () -> useCase.execute(invalidInput));
         verify(repository, times(1)).findById(userId);
         verify(repository, never()).existsByEmail(any(Email.class));
+        verify(user, never()).getEmail();
         verify(user, never()).update(any(Name.class), any(Email.class), any(Telephone.class));
         verify(repository, never()).save(any(User.class));
     }
@@ -193,10 +238,11 @@ class UpdateUserUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not save user when email already exists")
-    void shouldNotSaveUserWhenEmailAlreadyExists() {
+    @DisplayName("Should not save user when email already exists for different user")
+    void shouldNotSaveUserWhenEmailAlreadyExistsForDifferentUser() {
         when(repository.findById(userId)).thenReturn(Optional.of(user));
         when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(CURRENT_USER_EMAIL);
 
         assertThrows(DuplicateEmailError.class, () -> useCase.execute(input));
         verify(repository, never()).save(any(User.class));
@@ -260,4 +306,39 @@ class UpdateUserUseCaseTest {
                 email != null && email.getValue().equals(USER_EMAIL)
         ));
     }
+
+    @Test
+    @DisplayName("Should check if email exists before comparing with user email")
+    void shouldCheckIfEmailExistsBeforeComparingWithUserEmail() {
+        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(USER_EMAIL);
+        doNothing().when(user).update(any(Name.class), any(Email.class), any(Telephone.class));
+        when(repository.save(user)).thenReturn(updatedUser);
+
+        useCase.execute(input);
+
+        var inOrder = inOrder(repository, user);
+        inOrder.verify(repository).existsByEmail(any(Email.class));
+        inOrder.verify(user).getEmail();
+    }
+
+    @Test
+    @DisplayName("Should allow update with same email when email belongs to same user")
+    void shouldAllowUpdateWithSameEmailWhenEmailBelongsToSameUser() {
+        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.existsByEmail(any(Email.class))).thenReturn(true);
+        when(user.getEmail()).thenReturn(USER_EMAIL);
+        doNothing().when(user).update(any(Name.class), any(Email.class), any(Telephone.class));
+        when(repository.save(user)).thenReturn(updatedUser);
+
+        var result = useCase.execute(input);
+
+        assertNotNull(result);
+        verify(repository, times(1)).existsByEmail(any(Email.class));
+        verify(user, times(1)).getEmail();
+        verify(user, times(1)).update(any(Name.class), any(Email.class), any(Telephone.class));
+        verify(repository, times(1)).save(user);
+    }
+
 }
