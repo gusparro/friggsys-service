@@ -39,6 +39,18 @@ springdoc:
     operations-sorter: method
     tags-sorter: alpha
 
+# ====================
+# ACTUATOR / METRICS
+# ====================
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
 # =========================
 # API CUSTOM CONFIGURATION
 # =========================

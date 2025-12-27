@@ -13,5 +13,8 @@ public record HealthCheckResponse(
         String java,
 
         @JsonProperty("environment")
-        String environment
+        String environment,
+
+        @JsonProperty("uptime")
+        String uptime
 ) {}
