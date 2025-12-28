@@ -48,7 +48,7 @@ public class UserEntity {
     @PrePersist
     protected void onCreate() {
         createdAt = OffsetDateTime.now();
-        updatedAt = OffsetDateTime.now();
+        updatedAt = createdAt;
     }
 
     @PreUpdate
