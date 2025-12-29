@@ -1,20 +1,16 @@
 package com.gusparro.friggsys.adapter.api.facades;
 
 import com.gusparro.friggsys.adapter.api.mappers.UserApiMapper;
-import com.gusparro.friggsys.adapter.api.reponse.UserResponse;
 import com.gusparro.friggsys.adapter.api.request.ChangePasswordRequest;
 import com.gusparro.friggsys.adapter.api.request.CreateUserRequest;
 import com.gusparro.friggsys.adapter.api.request.UpdateUserRequest;
+import com.gusparro.friggsys.adapter.api.response.UserResponse;
 import com.gusparro.friggsys.adapter.exceptions.AdapterExceptionFactory;
 import com.gusparro.friggsys.domain.exceptions.InvalidStateError;
 import com.gusparro.friggsys.domain.exceptions.ValidationError;
 import com.gusparro.friggsys.domain.repositories.pagination.PageParameters;
 import com.gusparro.friggsys.usecase.exceptions.EntityNotFoundError;
 import com.gusparro.friggsys.usecase.user.*;
-import com.gusparro.friggsys.usecase.user.dtos.ChangePasswordInput;
-import com.gusparro.friggsys.usecase.user.dtos.CreateUserInput;
-import com.gusparro.friggsys.usecase.user.dtos.UpdateUserInput;
-import com.gusparro.friggsys.usecase.user.dtos.UserOutput;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
