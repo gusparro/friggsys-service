@@ -1,6 +1,6 @@
 package com.gusparro.friggsys.adapter.api;
 
-import com.gusparro.friggsys.adapter.api.reponse.HealthCheckResponse;
+import com.gusparro.friggsys.adapter.api.response.HealthCheckResponse;
 import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

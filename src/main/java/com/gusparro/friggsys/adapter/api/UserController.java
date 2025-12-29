@@ -1,7 +1,7 @@
 package com.gusparro.friggsys.adapter.api;
 
 import com.gusparro.friggsys.adapter.api.facades.UserOperationsFacade;
-import com.gusparro.friggsys.adapter.api.reponse.UserResponse;
+import com.gusparro.friggsys.adapter.api.response.UserResponse;
 import com.gusparro.friggsys.adapter.api.request.ChangePasswordRequest;
 import com.gusparro.friggsys.adapter.api.request.CreateUserRequest;
 import com.gusparro.friggsys.adapter.api.request.UpdateUserRequest;
