@@ -3,6 +3,8 @@ package com.gusparro.friggsys.adapter.exceptions.handler;
 import com.gusparro.friggsys.adapter.exceptions.BadResquestError;
 import com.gusparro.friggsys.adapter.exceptions.ConflictError;
 import com.gusparro.friggsys.adapter.exceptions.NotFoundError;
+import com.gusparro.friggsys.usecase.exceptions.DuplicateEmailError;
+import com.gusparro.friggsys.usecase.exceptions.MatchingError;
 import jakarta.servlet.http.HttpServletRequest;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
@@ -95,6 +97,22 @@ public class ApplicationExceptionHandler extends ResponseEntityExceptionHandler 
                 http.getRequestURI(), null, sanitizeMapData(error.getDetails()));
 
         return handleExceptionInternal(error, body, new HttpHeaders(), NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(MatchingError.class)
+    public ResponseEntity<?> handleMatchingError(MatchingError error, WebRequest request, HttpServletRequest http) {
+        var body = ProblemDetails.buildBodyResponse(IS_BAD_REQUEST_ERROR, error.getMessage(),
+                http.getRequestURI(), null, sanitizeMapData(error.getDetails()));
+
+        return handleExceptionInternal(error, body, new HttpHeaders(), BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(DuplicateEmailError.class)
+    public ResponseEntity<?> handleDuplicateEmailError(DuplicateEmailError error, WebRequest request, HttpServletRequest http) {
+        var body = ProblemDetails.buildBodyResponse(IS_BAD_REQUEST_ERROR, error.getMessage(),
+                http.getRequestURI(), null, sanitizeMapData(error.getDetails()));
+
+        return handleExceptionInternal(error, body, new HttpHeaders(), BAD_REQUEST, request);
     }
 
     @ExceptionHandler(Exception.class)

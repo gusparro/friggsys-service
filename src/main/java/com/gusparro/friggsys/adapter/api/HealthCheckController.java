@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.catalina.manager.StatusTransformer.formatSeconds;
-
 @RequiredArgsConstructor
 
 @RestController
@@ -39,8 +37,13 @@ public class HealthCheckController {
 
     @GetMapping
     public ResponseEntity<HealthCheckResponse> healthCheck() {
+        logger.info("Health check requested");
+
         var formattedUptime = getFormattedUptime();
         var response = new HealthCheckResponse(applicationName, version, java, environment, formattedUptime);
+
+        logger.debug("Health check response: application={}, version={}, uptime={}",
+                applicationName, version, formattedUptime);
 
         return ResponseEntity.ok(response);
     }
@@ -50,6 +53,14 @@ public class HealthCheckController {
         var uptimeSeconds = uptime != null ? uptime.value(TimeUnit.SECONDS) : 0;
 
         return formatSeconds((long) uptimeSeconds);
+    }
+
+    private String formatSeconds(long totalSeconds) {
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
 
 }
